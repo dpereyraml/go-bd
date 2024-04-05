@@ -80,5 +80,20 @@ func (r *ProductMySQL) Update(p *internal.Product) (err error) {
 
 // Delete deletes a product.
 func (r *ProductMySQL) Delete(id int) (err error) {
+	result, err := r.db.Exec("DELETE FROM products WHERE id = ?", id)
+	if err != nil {
+		return
+	}
+
+	// check the number of rows affected
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return
+	}
+	if rowsAffected != 1 {
+		err = ErrProductRowsAffected
+		return
+	}
+
 	return
 }
