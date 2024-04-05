@@ -48,6 +48,23 @@ func (r *ProductMySQL) FindById(id int) (p internal.Product, err error) {
 
 // Save saves a product.
 func (r *ProductMySQL) Save(p *internal.Product) (err error) {
+	// execute the query
+	result, err := r.db.Exec(
+		"INSERT INTO `products` (`name`, `quantity`, `code_value`, `is_published`, `expiration`, `price`) "+
+			"VALUES (?,?,?,?,?,?)",
+		p.Name, p.Quantity, p.CodeValue, p.IsPublished, p.Expiration, p.Price,
+	)
+	if err != nil {
+		return
+	}
+
+	// get the last inserted id
+	id, err := result.LastInsertId()
+	if err != nil {
+		return
+	}
+	p.Id = int(id)
+
 	return
 }
 
